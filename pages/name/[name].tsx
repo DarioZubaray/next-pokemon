@@ -130,17 +130,23 @@ export const PokemonByName: FC<Props> = ({ pokemon }) => {
                     <Card hoverable css={{ padding: '30px' }}>
                         <Card.Body>
                             <Text size={30} css={{ mb: 10 }}>Types:</Text>
-                            {pokemon.types.map(type => (
+                            {
+                                pokemon.types.map(type => (
 
-                                <Button key={type.type.name} flat color="primary" auto css={{ mb: 5}}>
-                                    {type.type.name}
-                                </Button>
-                            ))}
+                                    <Button key={type.type.name} flat color="primary" auto css={{ mb: 5}}>
+                                        {type.type.name}
+                                    </Button>
+                                ))
+                            }
 
                             <Text size={30} css={{ mb: 10 }}>Abilities:</Text>
                             {
                                 pokemon.abilities.map(ability => (
-                                    <Button css={{ mb: 5}}>{ ability.ability.name }</Button>
+                                    <Button
+                                        css={{ mb: 5}}
+                                        key={ ability.ability.name }>
+                                        { ability.ability.name }
+                                    </Button>
                                 ))
                             }
                         </Card.Body>
@@ -156,7 +162,7 @@ export const PokemonByName: FC<Props> = ({ pokemon }) => {
 
                             {
                                 pokemon.stats.map( stat => (
-                                    <Grid>
+                                    <Grid key={ stat.stat.name }>
                                         <Text size={ 20 }>{ getStatName(stat.stat.name) }: { stat.base_stat }</Text>
                                         <Progress
                                             color={ stat.base_stat < 60 ? 'error' : stat.base_stat < 100 ? 'warning' : 'success'}
