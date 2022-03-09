@@ -37,7 +37,6 @@ export const PokemonByName: FC<Props> = ({ pokemon }) => {
     }
 
     const onToggleClick = () => {
-        console.log('onToggleClick')
         localFavorites.toggleFavorite(pokemon.id)
         setIsInFav(!isInFav)
 
@@ -189,14 +188,30 @@ export const getStaticPaths: GetStaticPaths = async () => {
         paths: pokemones.map(name => ({
             params: { name }
         })),
-        fallback: false
+        fallback: 'blocking'
     }
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     const { name } = params as { name: string }
-    return await getPokemonInfo(name)
+    const pokemon = await getPokemonInfo(name)
+
+    if ( !pokemon ) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+            pokemon
+        },
+        revalidate: 86400 // 60sec * 60min *24hs
+    }
 }
 
 export default PokemonByName

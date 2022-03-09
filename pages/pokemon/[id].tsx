@@ -36,7 +36,6 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
     }
 
     const onToggleClick = () => {
-        console.log('onToggleClick')
         localFavorites.toggleFavorite(pokemon.id)
         setIsInFav(!isInFav)
 
@@ -132,10 +131,11 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
                             {
                                 pokemon.types.map(type => (
 
-                                <Button key={type.type.name} flat color="primary" auto css={{ mb: 5}}>
-                                    {type.type.name}
-                                </Button>
-                            ))}
+                                    <Button key={type.type.name} flat color="primary" auto css={{ mb: 5}}>
+                                        {type.type.name}
+                                    </Button>
+                                ))
+                            }
 
                             <Text size={30} css={{ mb: 10 }}>Abilities:</Text>
                             {
@@ -188,7 +188,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         paths: pokemones.map(id => ({
             params: { id }
         })),
-        fallback: false
+        fallback: 'blocking'
     }
 }
 
@@ -204,7 +204,23 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     const { id } = params as { id: string }
-    return await getPokemonInfo(id)
+    const pokemon = await getPokemonInfo(id)
+
+    if ( !pokemon ) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+            pokemon
+        },
+        revalidate: 86400 // 60sec * 60min *24hs
+    }
 }
 
 export default PokemonPage
